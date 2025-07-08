@@ -33,8 +33,8 @@ app.add_middleware(
 )
 
 
-loaded_model = joblib.load(os.path.join(model_dir, 'Xgboost\cardiac_risk_ensemble_model.pkl'))
-loaded_preprocessor = joblib.load(os.path.join(model_dir, 'Xgboost\cardiac_risk_preprocessor.pkl'))
+loaded_model = joblib.load(os.path.join(model_dir, 'XGBOOST\cardiac_risk_ensemble_model.pkl'))
+loaded_preprocessor = joblib.load(os.path.join(model_dir, 'XGBOOST\cardiac_risk_preprocessor.pkl'))
 
 risk_levels = {0: 'Stable', 1: 'Moderate', 2: 'Critical'}
 
@@ -234,18 +234,18 @@ def preprocess_ecg_signal(signal, target_length=5000):
     return processed_signal
 
 
-# model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models"
+# model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models/ecg_cnn"
 
 # load preprocessing config
-with open(f"{model_dir}/ecg_cnn/preprocessing_config.pkl", "rb") as f:
+with open(f"{model_dir}/CNN/preprocessing_config.pkl", "rb") as f:
     preprocessing_config = pickle.load(f)
 
 #  load scaler
-scaler = joblib.load(f"{model_dir}/ecg_cnn/scaler.pkl")
+scaler = joblib.load(f"{model_dir}/CNN/scaler.pkl")
 
 #  instantiate model and load weights
 model = EnhancedECG_CNN(dropout_rate=0.4)
-checkpoint = torch.load(fr"{model_dir}/ecg_cnn/enhanced_ecg_cnn_model.pth", map_location=torch.device('cpu'), weights_only=False)
+checkpoint = torch.load(fr"{model_dir}/NN/enhanced_ecg_cnn_model.pth", map_location=torch.device('cpu'), weights_only=False)
 
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
@@ -329,7 +329,7 @@ def predict_on_new_data(new_data: np.ndarray, config: Config):
 
     # Load scaler
     # scaler_path = r"lstm\scaler.pkl"
-    scaler = joblib.load(os.path.join(model_dir,'lstm\scaler.pkl'))
+    scaler = joblib.load(os.path.join(model_dir,'LSTM\scaler.pkl'))
     new_data_scaled = scaler.transform(new_data)
     new_data_scaled = torch.FloatTensor(new_data_scaled).unsqueeze(0).to(device)
 
@@ -342,7 +342,7 @@ def predict_on_new_data(new_data: np.ndarray, config: Config):
     ).to(device)
 
     # os.path.joint(model_dir, 'lstm\model.pth')
-    model_path = os.path.join(model_dir, 'lstm\model.pth') #"D:\Projects\Cardiac Patient Monitoring System\models\lstm\model.pth"
+    model_path = os.path.join(model_dir, 'LSTM\model.pth') #"D:\Projects\Cardiac Patient Monitoring System\models\lstm\model.pth"
 
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
