@@ -36,7 +36,7 @@ app.add_middleware(
 loaded_model = joblib.load(os.path.join(model_dir, 'XGBOOST\cardiac_risk_ensemble_model.pkl'))
 loaded_preprocessor = joblib.load(os.path.join(model_dir, 'XGBOOST\cardiac_risk_preprocessor.pkl'))
 
-risk_levels = {0: 'Stable', 1: 'Moderate', 2: 'Critical'}
+risk_levels = {0: 'Stable', 1: 'Moderate Risk', 2: 'Critical Risk'}
 
 # --- Categories ---
 sex_categories = ['F', 'M']
@@ -136,14 +136,16 @@ def predict(data: PredictionRequest ):
     pred_class = int(loaded_model.predict(X_processed)[0])
     pred_probs = loaded_model.predict_proba(X_processed)[0].tolist()
 
-    return {
-        "predicted_class": pred_class ,
-        "predicted_label": risk_levels.get(pred_class, "Unknown"),
-        "probabilities": {
-            risk_levels[i]: prob
-            for i, prob in enumerate(pred_probs)
-        }
-    }
+    # return {
+    #     "predicted_class": pred_class ,
+    #     "predicted_label": risk_levels.get(pred_class, "Unknown"),
+    #     "probabilities": {
+    #         risk_levels[i]: prob
+    #         for i, prob in enumerate(pred_probs)
+    #     }
+    # }
+
+    return risk_levels.get(pred_class, "Unknown")
 
 
 
@@ -234,7 +236,7 @@ def preprocess_ecg_signal(signal, target_length=5000):
     return processed_signal
 
 
-# model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models/ecg_cnn"
+# model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models"
 
 # load preprocessing config
 with open(f"{model_dir}/CNN/preprocessing_config.pkl", "rb") as f:
@@ -267,14 +269,15 @@ def predict_ecg_risk(request: ECGRequest):
         pred_class_idx = np.argmax(probs)
         pred_class_name = preprocessing_config['class_names'][pred_class_idx]
 
-    return  {
-        "predicted_class": int(pred_class_idx),
-        "predicted_label": pred_class_name,
-        "probabilities": {
-            preprocessing_config['class_names'][i]: float(probs[i])
-            for i in range(len(preprocessing_config['class_names']))
-        }
-    }
+    # return  {
+    #     "predicted_class": int(pred_class_idx),
+    #     "predicted_label": pred_class_name,
+    #     "probabilities": {
+    #         preprocessing_config['class_names'][i]: float(probs[i])
+    #         for i in range(len(preprocessing_config['class_names']))
+    #     }
+    # }
+    return pred_class_name
 
 
 
@@ -375,18 +378,19 @@ def predict(data: PatientData):
     input_array = np.array(data.data)
 
     predicted_class, probabilities = predict_on_new_data(input_array, config)
-    label_map = {0: "Non-Critical", 1: "Critical"}
+    label_map = {0: "Non-Critical Risk", 1: "Critical Risk"}
     label = label_map.get(predicted_class, "Unknown")
 
 
-    return {
-        "predicted_class": int(predicted_class),
-        "predicted_label": label,
-        "probabilities": {
-        label_map.get(idx, f"Class_{idx}"): float(prob)
-        for idx, prob in enumerate(probabilities)
-    }
+    # return {
+    #     "predicted_class": int(predicted_class),
+    #     "predicted_label": label,
+    #     "probabilities": {
+    #     label_map.get(idx, f"Class_{idx}"): float(prob)
+    #     for idx, prob in enumerate(probabilities)
+    # } }
+    return label
 
-    }
+
 
 
