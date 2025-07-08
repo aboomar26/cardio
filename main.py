@@ -30,9 +30,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models\Xgboost"
-loaded_model = joblib.load(os.path.join(model_dir, 'cardiac_risk_ensemble_model.pkl'))
-loaded_preprocessor = joblib.load(os.path.join(model_dir, 'cardiac_risk_preprocessor.pkl'))
+model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models"
+loaded_model = joblib.load(os.path.join(model_dir, 'Xgboost\cardiac_risk_ensemble_model.pkl'))
+loaded_preprocessor = joblib.load(os.path.join(model_dir, 'Xgboost\cardiac_risk_preprocessor.pkl'))
 
 risk_levels = {0: 'Stable', 1: 'Moderate', 2: 'Critical'}
 
@@ -232,18 +232,18 @@ def preprocess_ecg_signal(signal, target_length=5000):
     return processed_signal
 
 
-model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models\ecg_cnn"
+# model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models"
 
 # load preprocessing config
-with open(f"{model_dir}/preprocessing_config.pkl", "rb") as f:
+with open(f"{model_dir}/ecg_cnn/preprocessing_config.pkl", "rb") as f:
     preprocessing_config = pickle.load(f)
 
 #  load scaler
-scaler = joblib.load(f"{model_dir}/scaler.pkl")
+scaler = joblib.load(f"{model_dir}/ecg_cnn/scaler.pkl")
 
 #  instantiate model and load weights
 model = EnhancedECG_CNN(dropout_rate=0.4)
-checkpoint = torch.load(f"{model_dir}/enhanced_ecg_cnn_model.pth", map_location=torch.device('cpu'), weights_only=False)
+checkpoint = torch.load(fr"{model_dir}/ecg_cnn/enhanced_ecg_cnn_model.pth", map_location=torch.device('cpu'), weights_only=False)
 
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
@@ -326,8 +326,8 @@ def predict_on_new_data(new_data: np.ndarray, config: Config):
     device = config.DEVICE
 
     # Load scaler
-    scaler_path = r"D:\Projects\Cardiac Patient Monitoring System\models\lstm\scaler.pkl"
-    scaler = joblib.load(scaler_path)
+    # scaler_path = r"lstm\scaler.pkl"
+    scaler = joblib.load(os.path.join(model_dir,'lstm\scaler.pkl'))
     new_data_scaled = scaler.transform(new_data)
     new_data_scaled = torch.FloatTensor(new_data_scaled).unsqueeze(0).to(device)
 
@@ -339,7 +339,9 @@ def predict_on_new_data(new_data: np.ndarray, config: Config):
         dropout_rate=config.DROPOUT_RATE
     ).to(device)
 
-    model_path = r"D:\Projects\Cardiac Patient Monitoring System\models\lstm\model.pth"
+    # os.path.joint(model_dir, 'lstm\model.pth')
+    model_path = os.path.join(model_dir, 'lstm\model.pth') #"D:\Projects\Cardiac Patient Monitoring System\models\lstm\model.pth"
+
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
 
