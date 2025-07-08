@@ -20,6 +20,8 @@ import torch.nn.functional as F
 
 app = FastAPI()
 
+model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models"
+
 ############################Xgboost###############
 
 app.add_middleware(
@@ -30,7 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model_dir = r"D:\Projects\Cardiac Patient Monitoring System\models"
+
 loaded_model = joblib.load(os.path.join(model_dir, 'Xgboost\cardiac_risk_ensemble_model.pkl'))
 loaded_preprocessor = joblib.load(os.path.join(model_dir, 'Xgboost\cardiac_risk_preprocessor.pkl'))
 
