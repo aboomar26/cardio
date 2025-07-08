@@ -245,7 +245,7 @@ scaler = joblib.load(f"{model_dir}/CNN/scaler.pkl")
 
 #  instantiate model and load weights
 model = EnhancedECG_CNN(dropout_rate=0.4)
-checkpoint = torch.load(fr"{model_dir}/NN/enhanced_ecg_cnn_model.pth", map_location=torch.device('cpu'), weights_only=False)
+checkpoint = torch.load(fr"{model_dir}/CNN/enhanced_ecg_cnn_model.pth", map_location=torch.device('cpu'), weights_only=False)
 
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
