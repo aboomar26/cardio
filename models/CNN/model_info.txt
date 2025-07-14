@@ -1,0 +1,11 @@
+Enhanced ECG CNN Model Information
+==================================================
+Model Architecture: EnhancedECG_CNN
+Input Size: 5000
+Number of Classes: 3
+Class Names: ['Critical Risk', 'Stable', 'Moderate Risk']
+Class Mapping: {'Critical Risk': 0, 'Stable': 1, 'Moderate Risk': 2}
+Best Validation F1: 0.8387
+Balancing Method: manual_balanced
+Original Distribution: Counter({2: 42171, 1: 2920, 0: 61})
+Balanced Distribution: Counter({2: 8000, 1: 4000, 0: 1200})

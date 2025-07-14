@@ -134,7 +134,7 @@ def predict(data: PredictionRequest ):
 
     # Predict
     pred_class = int(loaded_model.predict(X_processed)[0])
-    pred_probs = loaded_model.predict_proba(X_processed)[0].tolist()
+    # pred_probs = loaded_model.predict_proba(X_processed)[0].tolist()
 
     # return {
     #     "predicted_class": pred_class ,
